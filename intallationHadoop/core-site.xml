@@ -1,0 +1,8 @@
+<property>
+  <name>fs.defaultFS</name>
+  <value>hdfs://:9000</value>
+</property>
+<property>
+  <name>hadoop.tmp.dir</name>
+  <value>file:/usr/local/hadoop-2.7.2/tmp</value>
+</property>

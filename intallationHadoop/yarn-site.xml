@@ -1,0 +1,12 @@
+<property>
+  <name>yarn.resourcemanager.hostname</name>
+  <value>centos7-hd0</value>
+</property>
+<property>
+  <name>yarn.nodemanager.aux-services</name>
+  <value>mapreduce_shuffle</value>
+</property>
+<property>
+  <name>yarn.log-aggregation-enable</name>
+  <value>true</value>
+</property>
