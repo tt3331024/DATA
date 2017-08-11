@@ -69,18 +69,17 @@ mkdir ~/.ssh
 chmod 700 ~/.ssh
 
 # 回到centos7-hd0，將authorized_keys 傳送到另外三台主機
-scp hadoop@centos7-hd0:/home/hadoop/.ssh/authorized_keys ~/.ssh/
 
-scp ~/.ssh/authorized_keys hadoop@centos7—hd1:/home/hadoop/.ssh/
-scp ~/.ssh/authorized_keys hadoop@centos7—hd2:/home/hadoop/.ssh/
-scp ~/.ssh/authorized_keys hadoop@centos7—hd3:/home/hadoop/.ssh/
+scp ~/.ssh/authorized_keys hadoop@centos7-hd1:/home/hadoop/.ssh/
+scp ~/.ssh/authorized_keys hadoop@centos7-hd2:/home/hadoop/.ssh/
+scp ~/.ssh/authorized_keys hadoop@centos7-hd3:/home/hadoop/.ssh/
 
 
 # 務必確認每台主機中的.ssh 資料夾的權限一定要為700, authorized_keys 的權限要為644
 chmod 700 ~/hadoop/.ssh/
 chmod 644 ~/hadoop/.ssh/authorized_keys
 
-# 測試四台機器間是否可用ssh進行無密碼登入
+# 測試從 hd0 是否可用ssh進行無密碼登入每一台 Hadoop 主機(包含自己 hd0)
 ssh centos7-hd0
 ssh centos7-hd1
 ssh centos7-hd2
@@ -138,9 +137,9 @@ nano mapred-site.xml
 nano yarn-site.xml
 
 # 在 centos7-hd0 壓縮設定檔後傳到另外三台
-cd /usr/hadoop-2.7.2/etc
+cd /usr/local/hadoop-2.7.2/etc
 tar -cz -f hadoop.tar.gz hadoop
-scp hadoop.tar.gz hadoop@centos7—hd1:/tmp
+scp hadoop.tar.gz hadoop@centos7-hd1:/tmp
 scp hadoop.tar.gz hadoop@centos7-hd2:/tmp
 scp hadoop.tar.gz hadoop@centos7-hd3:/tmp
 
@@ -169,21 +168,22 @@ export JAVA_LIBRARY_PATH=$HADOOP_HOME/lib/native:$JAVA_LIBRARY_PATH
 # 以 root 身份登入
 nano /etc/firewalld/zones/public.xml
 
-# 輸入下列 xml, 讓四台機器彼此可以互通，並打開特定的port
+# 在最後一行</zone>'之前'，輸入下列 xml，讓四台機器彼此可以互通，並打開特定的port
+# 並讓所有192.168開頭的ip可以查看8088, 50070等port
 <rule family="ipv4">
-  <source address="192.168.0.200"/>
+  <source address="192.168.0.100"/>
   <accept/>
 </rule>
 <rule family="ipv4">
-  <source address="192.168.0.201"/>
+  <source address="192.168.0.101"/>
   <accept/>
 </rule>
 <rule family="ipv4">
-  <source address="192.168.0.202"/>
+  <source address="192.168.0.102"/>
   <accept/>
 </rule>
 <rule family="ipv4">
-  <source address="192.168.0.203"/>
+  <source address="192.168.0.103"/>
   <accept/>
 </rule>
 <rule family="ipv4">
@@ -212,19 +212,19 @@ firewall-cmd --reload
 nano /etc/firewalld/zones/public.xml
 # worker 機只會用到 port 19888, 因此只須開通該 port 即可
 <rule family="ipv4">
-  <source address="192.168.0.200"/>
+  <source address="192.168.0.100"/>
   <accept/>
 </rule>
 <rule family="ipv4">
-  <source address="192.168.0.201"/>
+  <source address="192.168.0.101"/>
   <accept/>
 </rule>
 <rule family="ipv4">
-  <source address="192.168.0.202"/>
+  <source address="192.168.0.102"/>
   <accept/>
 </rule>
 <rule family="ipv4">
-  <source address="192.168.0.203"/>
+  <source address="192.168.0.103"/>
   <accept/>
 </rule>
 <rule family="ipv4">
@@ -243,8 +243,8 @@ firewall-cmd --reload
 hdfs namenode -format
 
 # 未來須重新 format 時，要先在 master 機及 worker 機中，刪除hadoop 裡的 tmp檔案後，再重新初始 hdfs
-rm -R /usr/hadoop-2.7.2/tmp
-mkdir /usr/hadoop-2.7.2/tmp
+rm -R /usr/local/hadoop-2.7.2/tmp
+mkdir /usr/local/hadoop-2.7.2/tmp
 
 # 啟動 job historyserver
 mr-jobhistory-daemon.sh start historyserver
