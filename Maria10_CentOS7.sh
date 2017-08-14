@@ -60,6 +60,7 @@ yum install MariaDB-server MariaDB-client
 
 # 修改編碼及緩衝
 nano /etc/my.cnf
+# 在最末端輸入下列內容
 [mysqld]
 collation-server = utf8_unicode_ci
 character-set-server = utf8
@@ -69,20 +70,22 @@ max_allowed_packet=1024M
 # 啟動服務
 /etc/init.d/mysql start
 
-# 設定密碼
+# format database
 mysql_secure_installation
 
-Set root password? [Y/n] y
-Remove anonymous users? [Y/n] y
-Disallow root login remotely? [Y/n] y
-Remove test database and access to it? [Y/n] y
-Reload privilege tables now? [Y/n] y
+Set root password? [Y/n] Y
+# 輸入新的 root 密碼並再做一次確認
+Remove anonymous users? [Y/n] Y
+Disallow root login remotely? [Y/n] Y
+Remove test database and access to it? [Y/n] Y
+Reload privilege tables now? [Y/n] Y
 
 # 重啟服務
 /etc/init.d/mysql restart
 
 # 確認服務狀態
 netstat -tln
+# 在 Local Address 中有看到 3306 就是有啟動 mariaDB
 
 # 關閉服務
 /etc/init.d/mysql stop
@@ -96,7 +99,7 @@ firewall-cmd --add-port=3306/tcp
 firewall-cmd --permanent --add-port=3306/tcp
 firewall-cmd --reload
 firewall-cmd --list-all
-# 如果要修改或刪除防火牆規則vi /etc/firewalld/zones/public.xml
+# 如果要修改或刪除防火牆規則nano /etc/firewalld/zones/public.xml
 
 
 # 增加 mysqlclient 帳號
@@ -112,5 +115,12 @@ passwd mysqlclient
 # 查看 MySQL 版本
 mysql --version
 
-# 連線
+
+# ----- 4-啟動 MariaDB --------------------------------------------------------------------------------
+
 mysql -h localhost -u root -p
+# 輸入 root 密碼
+
+CREATE DATABASE BASEBALLDATABANK; # 創建資料庫
+CREATE USER 'mlb'@'localhost' IDENTIFIED BY 'MajorLeagueBaseball'; # 創建使用者和密碼
+GRANT ALL ON BASEBALLDATABANK.* TO 'mlb'@'localhost'; # 給予使用者權限

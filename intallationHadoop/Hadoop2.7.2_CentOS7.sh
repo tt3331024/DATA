@@ -15,7 +15,7 @@ nano /etc/hosts
 192.168.0.103 centos7-hd3
 
 # 增加以下三行關閉 IPv6
-vi /etc/sysctl.conf
+nano /etc/sysctl.conf
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
@@ -29,16 +29,16 @@ ping centos7-hd2 -c 4
 ping centos7-hd3 -c 4
 
 # 修改 SSH 設定
-vi /etc/ssh/sshd_config
+nano /etc/ssh/sshd_config
 Protocol 2 # 限定只能用 version 2 連線
 PermitRootLogin no # 不充許遠端使用 root 登入
 
 # 修改可使用連線 SSH 設定
-vi /etc/hosts.allow
+nano /etc/hosts.allow
 sshd: 192.168.0.*: allow
 
 # 修改其它電腦不可連線 SSH 設定
-vi /etc/hosts.deny
+nano /etc/hosts.deny
 sshd: ALL
 
 # 重新啟動 SSH 關閉或開啟語法如下
