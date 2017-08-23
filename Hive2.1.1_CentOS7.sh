@@ -1,4 +1,5 @@
 # ----- 1-設定 Server ---------------------------------------------------------------------------------
+
 # 延續使用 hadoop 的環境，繼續安裝 Hive
 # Hive 是需要透過 meatstor 將 Hive 的 meta table and patition 存到關聯式資料庫中。設定 metastore 有三種模式：Embedded Mode, Local Mode, Remote Mode.
 # 其中 Embedded Mode 適用於測試模式。
@@ -21,6 +22,7 @@
 # 在 MariaDB 建立一個 database 和 user
 CREATE DATABASE HADOOP;
 GRANT ALL ON HADOOP.* TO 'hadoop'@'192.168.0.%' IDENTIFIED BY 'hadoop';
+GRANT ALL ON HADOOP.* TO 'hadoop'@'localhost' IDENTIFIED BY 'hadoop';
 FLUSH PRIVILEGES;
 
 # ----- 2-Hive ----------------------------------------------------------------------------------------
@@ -107,7 +109,7 @@ cp ~/mariadb-java-client-1.5.9.jar /usr/local/hive-2.1.1/lib/
 # 將 Hive 底下的 scripts 檔中的 schema 匯入 MariaDB，需選擇和 Hive 版本匹配的 schema 檔案 
 # 進到 MariaDB 中的 HADOOP database
 mysql -u hadoop -p HADOOP
-source /usr/local/hive-2.1.1/scripts/metastore/upgrade/mysql/hive-schema-2.1.0.mysql.sql
+SOURCE /usr/local/hive-2.1.1/scripts/metastore/upgrade/mysql/hive-schema-2.1.0.mysql.sql
 
 
 # 再有安裝 Hive 的主機設定環境變數
