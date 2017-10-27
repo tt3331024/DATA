@@ -6,22 +6,14 @@
 
 ### 2-設定 SSH
 
-開機使用 root 登入 cnetos7-hd0
-拿掉 IPv6 設定及取消 localhost 127.0.0.1 及 127.0.1.1 對應
+開機使用root登入cnetos7-hd0
 
+增加ip位置和hosts name
 	nano /etc/hosts
 		192.168.0.100 centos7-hd0
 		192.168.0.101 centos7-hd1
 		192.168.0.102 centos7-hd2
 		192.168.0.103 centos7-hd3
-
-增加以下三行關閉 IPv6
-nano /etc/sysctl.conf
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
-net.ipv6.conf.lo.disable_ipv6 = 1
-# 檢查設定是否生效
-sysctl -p
 
 四台機器間互ping確認互通
 	ping centos7-hd0 -c 4
@@ -29,7 +21,7 @@ sysctl -p
 	ping centos7-hd2 -c 4
 	ping centos7-hd3 -c 4
 
-修改 SSH 設定
+修改SSH設定
 	nano /etc/ssh/sshd_config
 		Protocol 2 # 限定只能用 version 2 連線
 		PermitRootLogin no # 不充許遠端使用 root 登入
@@ -42,24 +34,24 @@ sysctl -p
 	nano /etc/hosts.deny
 		sshd: ALL
 
-重新啟動 SSH 關閉或開啟語法如下
+重新啟動SSH關閉或開啟語法如下
 	service sshd restart
 	service sshd stop
 	service sshd start
 
-增加 hadoop 帳號
+增加hadoop帳號
 	useradd hadoop 
 	passwd hadoop
 
-**離開 root 帳號**
-**用 hadoop 帳號登入**
+**離開root帳號**
+**用hadoop帳號登入**
 
-在 centos7-hd0 設定 SSH
+在centos7-hd0設定SSH無密碼登入
 	ssh-keygen -t rsa
 	# 金鑰放置位置使用預設，直接return即可
 	# passphrase不用設定，一樣直接return即可
 
-將公鑰複製到authorized_keys 並修改權限
+將公鑰複製到authorized_keys並修改權限
 	cat ~/.ssh/id_rsa.pub >> .ssh/authorized_keys
 	chmod 644 ~/.ssh/authorized_keys
 
@@ -86,4 +78,22 @@ sysctl -p
 	ssh centos7-hd3
 	exit
 
-# ----- 3-安裝 Oracle JDK -----------------------------------------------------------------------------
+### 3-安裝 Oracle JDK
+
+**使用root登入centos7-hd0**  
+下載oracle JDK
+	wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u151-b12/e758a0de34e24606bca991d704f6dcbf/jdk-8u151-linux-x64.rpm"
+
+開始安裝JDK
+	rpm -ivh jdk-8u121-linux-x64.rpm
+
+設定環境變數
+	nano /etc/environment
+		JAVA_HOME=/usr/java/jdk1.8.0_121
+	source /etc/environment
+	echo $JAVA_HOME
+
+確認 java
+	jps
+
+在每一台VM上安裝oracle JDK
