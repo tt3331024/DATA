@@ -3,14 +3,14 @@
 # 1. 除了安裝 Ambari 的 user 外，不可以有其他 user (四台機器都是)
 # 2. 設定FQDN(四台機器都要)
 nano /etc/hosts
-192.168.0.100 entos7-hd0.example.com entos7-hd0
-192.168.0.101 entos7-hd1.example.com entos7-hd1
-192.168.0.102 entos7-hd2.example.com entos7-hd2
-192.168.0.103 entos7-hd3.example.com entos7-hd3
-# 3. 安裝好 Oracle JDK(Ambari server 需要)
+192.168.0.100 centos7-hd0.example.com entos7-hd0
+192.168.0.101 centos7-hd1.example.com entos7-hd1
+192.168.0.102 centos7-hd2.example.com entos7-hd2
+192.168.0.103 centos7-hd3.example.com entos7-hd3
+# 3. 安裝好 Oracle JDK(四台機器都要)
 # 4. ssh password-less(Ambari server 到其他機器)
 # 5. 關閉防火牆(四台機器都要)
-systemctl stop firewall-server
+systemctl stop firewalld.service
 # 6. 安裝並開通ntpd(四台機器都要)
 yum install ntp
 systemctl start ntpd

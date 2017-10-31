@@ -50,7 +50,7 @@
 	useradd hadoop 
 	passwd hadoop
 
-**離開root帳號**
+**離開root帳號**  
 **用hadoop帳號登入**
 
 在centos7-hd0設定SSH無密碼登入
@@ -98,12 +98,12 @@
 
 開始安裝JDK
 
-	rpm -ivh jdk-8u121-linux-x64.rpm
+	rpm -ivh jdk-8u151-linux-x64.rpm
 
 設定環境變數
 
 	nano /etc/environment
-	 JAVA_HOME=/usr/java/jdk1.8.0_121
+	 JAVA_HOME=/usr/java/jdk1.8.0_151
 	source /etc/environment
 	echo $JAVA_HOME
 
@@ -115,23 +115,23 @@
 
 ### 4-安裝 Hadoop
 
-**使用root登入centos7-hd0**
+**使用root登入centos7-hd0**  
 下載 Hadoop
 
-	wget http://apache.stu.edu.tw/hadoop/common/hadoop-2.7.2/hadoop-2.7.2.tar.gz
+	wget http://apache.stu.edu.tw/hadoop/common/hadoop-2.7.4/hadoop-2.7.4.tar.gz
 
 解壓縮並安裝 Hadoop
 
-	tar -xzv -f ~/hadoop-2.7.2.tar.gz -C /usr/local
-	chown -R hadoop:hadoop /usr/local/hadoop-2.7.2
+	tar -xzv -f ~/hadoop-2.7.4.tar.gz -C /usr/local
+	chown -R hadoop:hadoop /usr/local/hadoop-2.7.4
 
 在每台 VM 上安裝 Hadoop
 
-**使用 hadoop 身份登入 centos7-hd0**
+**使用 hadoop 身份登入 centos7-hd0**  
 建立資料夾及進行組態設定
 
-	mkdir /usr/local/hadoop-2.7.2/tmp
-	cd /usr/local/hadoop-2.7.2/etc/hadoop/
+	mkdir /usr/local/hadoop-2.7.4/tmp
+	cd /usr/local/hadoop-2.7.4/etc/hadoop/
 	cp mapred-site.xml.template mapred-site.xml
 
 在修改以下設定檔
@@ -144,20 +144,20 @@
 
 在 centos7-hd0 壓縮設定檔後傳到另外三台
 
-	cd /usr/local/hadoop-2.7.2/etc
+	cd /usr/local/hadoop-2.7.4/etc
 	tar -cz -f hadoop.tar.gz hadoop
 	scp hadoop.tar.gz hadoop@centos7-hd1:/tmp
 	scp hadoop.tar.gz hadoop@centos7-hd2:/tmp
 	scp hadoop.tar.gz hadoop@centos7-hd3:/tmp
 
-到另外三台 VM 一一解開壓縮檔
+到另外三台VM解開壓縮檔
 
-	tar -xz -f /tmp/hadoop.tar.gz -C /usr/local/hadoop-2.7.2/etc/
+	tar -xz -f /tmp/hadoop.tar.gz -C /usr/local/hadoop-2.7.4/etc/
 
 回到centos7-hd0 更新 Hadoop 環境設定
 	
 	nano ~/.bashrc
-	 export HADOOP_HOME=/usr/local/hadoop-2.7.2
+	 export HADOOP_HOME=/usr/local/hadoop-2.7.4
 	 export PATH=$PATH:$HADOOP_HOME/bin
 	 export PATH=$PATH:$HADOOP_HOME/sbin
 	 export HADOOP_MAPERD_HOME=$HADOOP_HOME
@@ -175,25 +175,25 @@ source 環境設定
 
 ### 5-Firewall 設定
 
-**以root身份登入開通四台主機的防火牆**
+**以root身份登入開通四台主機的防火牆**  
 添加可通過防火牆的ip位置
 
 	firewall-cmd --zone=public --add-rich-rule='rule family="ipv4" source address="192.168.0.0/24" accept' --permanent
 	firewall-cmd --reload
 
+可從`/etc/firewalld/zones/public.xml`看到完整防火牆的資訊
 
 ### 6-啟動 Hadoop
 
-使用hadoop登入centos7-hd0
-
+**使用hadoop登入centos7-hd0**  
 初始hdfs(第一次登入時要進行格式化)
 
 	hdfs namenode -format
 
 未來須重新format時，要先在master機及worker機中，刪除hadoop裡的tmp檔案後，再重新初始hdfs
 
-	rm -R /usr/local/hadoop-2.7.2/tmp
-	mkdir /usr/local/hadoop-2.7.2/tmp
+	rm -R /usr/local/hadoop-2.7.4/tmp
+	mkdir /usr/local/hadoop-2.7.4/tmp
 
 啟動job historyserver
 
@@ -213,15 +213,15 @@ source 環境設定
 
 	hadoop version
 
-可在Browser輸入下列網址來看hdfs和yarn的狀態
-# Namenode
-http://centos7-hd0:50070
-# SecondaryNamenode
-http://centos7-hd0:50090
-# Yarn
-http://centos7-hd0:8088
-# Job Historyserver
-http://centos7-hd0:19888/jobhistory
+可在Browser輸入下列網址來看hdfs和yarn的狀態  
+* Namenode  
+  http://centos7-hd0:50070
+* SecondaryNamenode
+  http://centos7-hd0:50090
+* Yarn
+  http://centos7-hd0:8088
+* Job Historyserver
+  http://centos7-hd0:19888/jobhistory
 
 停止 hadoop
 
